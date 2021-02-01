@@ -2,24 +2,61 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+/*
 class Square extends React.Component {
   render() {
     return (
-      <button className="square">
-        {/* TODO */}
+      <button className="square" 
+              onClick={ ()=> this.props.onClick() } 
+      >
+        { this.props.value }
       </button>
     );
   }
 }
+*/
+
+/* 함수 컴포넌트 - state없이 render 함수만을 갖는다. */
+function Square(props){
+  return (
+    <button className="square" onClick={ props.onClick }>
+      {props.value}
+    </button>
+  );
+}
+
+/**
+ * props는 정보를 전달하는 용도
+ * state는 상태를 저장하는 용도
+**/
 
 class Board extends React.Component {
-  renderSquare(i) {
-    return <Square />;
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares: Array(9).fill(null),
+      xIsNext: true, // player change
+    }
+  }
+
+  handleClick(i) {
+    const squares = this.state.squares.slice(); // 복사본 생성
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
+
+  renderSquare(i) { // 함수
+    return <Square 
+              value={this.state.squares[i]} 
+              onClick = { ()=> this.handleClick(i) }  
+            />;
   }
 
   render() {
-    const status = 'Next player: X';
-
+    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     return (
       <div>
         <div className="status">{status}</div>
